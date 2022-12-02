@@ -4,10 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -18,7 +23,7 @@ import java.util.List;
  * @since 2022-12-02
  */
 @Data
-public class SysAccount implements Serializable {
+public class SysAccount implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,4 +86,31 @@ public class SysAccount implements Serializable {
 
     @TableField(exist = false)
     private List<SysResource> resources;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return resources.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getId() + ":" + role.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled==1;
+    }
 }

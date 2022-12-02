@@ -18,8 +18,10 @@ public class Constant {
     public static final List<Pair<HttpMethod, String>> WHITES = new LinkedList<>();
 
     static {
-        WHITES.add(Pair.of(HttpMethod.POST, V1 + "/login"));
-        WHITES.add(Pair.of(HttpMethod.POST, V1 + "/logout"));
+        WHITES.add(Pair.of(HttpMethod.POST, "/admin/login"));
+        //WHITES.add(Pair.of(HttpMethod.POST, V1 + "/login"));
+        WHITES.add(Pair.of(HttpMethod.POST, "/admin/logout"));
+        //WHITES.add(Pair.of(HttpMethod.POST, V1 + "/logout"));
         WHITES.add(Pair.of(HttpMethod.GET, "/favicon.ico"));
         WHITES.add(Pair.of(HttpMethod.GET, "/swagger-ui.html"));
         WHITES.add(Pair.of(HttpMethod.GET, "/swagger-ui/**"));

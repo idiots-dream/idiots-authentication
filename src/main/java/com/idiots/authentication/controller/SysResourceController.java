@@ -1,10 +1,9 @@
 package com.idiots.authentication.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.idiots.authentication.entity.SysResource;
 import com.idiots.authentication.lang.CommonPage;
 import com.idiots.authentication.lang.Result;
-import com.idiots.authentication.entity.SysResource;
-import com.idiots.authentication.security.DynamicSecurityMetadataSource;
 import com.idiots.authentication.service.SysResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,14 +22,11 @@ public class SysResourceController {
 
     @Autowired
     private SysResourceService resourceService;
-    @Autowired
-    private DynamicSecurityMetadataSource dynamicSecurityMetadataSource;
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public Result create(@RequestBody SysResource SysResource) {
         boolean success = resourceService.create(SysResource);
-        dynamicSecurityMetadataSource.clearDataSource();
         if (success) {
             return Result.success(null);
         } else {
@@ -43,7 +39,6 @@ public class SysResourceController {
     public Result update(@PathVariable Long id,
                                @RequestBody SysResource SysResource) {
         boolean success = resourceService.update(id, SysResource);
-        dynamicSecurityMetadataSource.clearDataSource();
         if (success) {
             return Result.success(null);
         } else {
@@ -62,7 +57,6 @@ public class SysResourceController {
     @ResponseBody
     public Result delete(@PathVariable Long id) {
         boolean success = resourceService.delete(id);
-        dynamicSecurityMetadataSource.clearDataSource();
         if (success) {
             return Result.success(null);
         } else {
