@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.idiots.authentication.mapper.SysAccountMapper">
+    <select id="getAdminIdList" resultType="java.lang.Long">
+        SELECT
+            DISTINCT ar.account_id
+        FROM
+            sys_role_resource rr
+                LEFT JOIN sys_account_role ar ON rr.role_id = ar.role_id
+        WHERE rr.resource_id=#{resourceId}
+    </select>
+</mapper>
