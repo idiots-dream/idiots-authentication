@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date 2022-12-2
  */
 @Configuration
-public class MallSecurityConfig {
+public class ISecurityConfig {
 
     @Resource
     private SysAccountService accountService;

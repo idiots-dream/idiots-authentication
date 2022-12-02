@@ -1,8 +1,8 @@
 package com.idiots.authentication.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
  * @author devil-idiots
  * Date 2022-12-2
  */
-@Getter
-@Setter
+@Data
+@Configuration
 @ConfigurationProperties(prefix = "secure.ignored")
 public class IgnoreUrlsConfig {
 
