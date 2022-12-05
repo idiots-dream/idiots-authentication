@@ -1,18 +1,16 @@
 package com.idiots.authentication.controller;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.idiots.authentication.lang.CommonPage;
-import com.idiots.authentication.lang.Result;
 import com.idiots.authentication.dto.SysAccountLoginParam;
 import com.idiots.authentication.dto.SysAccountParam;
 import com.idiots.authentication.dto.UpdateAccountPasswordParam;
 import com.idiots.authentication.entity.SysAccount;
 import com.idiots.authentication.entity.SysRole;
+import com.idiots.authentication.lang.Result;
 import com.idiots.authentication.service.SysAccountService;
 import com.idiots.authentication.service.SysRoleService;
 import com.idiots.authentication.util.TokenProviderUtil;
-import org.springframework.stereotype.Controller;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +28,8 @@ import java.util.stream.Collectors;
  * @author devil-idiots
  * Date 2022-12-2
  */
-@Controller
+@Slf4j
+@RestController
 @RequestMapping("/admin")
 public class SysAccountController {
     @Resource
@@ -39,7 +38,6 @@ public class SysAccountController {
     private SysRoleService roleService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @ResponseBody
     public Result register(@Validated @RequestBody SysAccountParam SysAccountParam) {
         SysAccount sysAccount = accountService.register(SysAccountParam);
         if (sysAccount == null) {
@@ -49,7 +47,6 @@ public class SysAccountController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
     public Result login(@Validated @RequestBody SysAccountLoginParam SysAccountLoginParam) {
         String token = accountService.login(SysAccountLoginParam.getUsername(), SysAccountLoginParam.getPassword());
         if (token == null) {
@@ -63,7 +60,6 @@ public class SysAccountController {
 
 
     @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
-    @ResponseBody
     public Result refreshToken(HttpServletRequest request) {
         String token = request.getHeader(TokenProviderUtil.HEADER);
         String refreshToken = accountService.refreshToken(token);
@@ -78,11 +74,7 @@ public class SysAccountController {
 
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    @ResponseBody
-    public Result getAdminInfo(Principal principal) {
-        if (principal == null) {
-            return Result.failed("");
-        }
+    public Map<String, Object> getAdminInfo(Principal principal) {
         String username = principal.getName();
         SysAccount sysAccount = accountService.getAccountByUsername(username);
         Map<String, Object> data = new HashMap<>();
@@ -94,24 +86,20 @@ public class SysAccountController {
             List<String> roles = roleList.stream().map(SysRole::getName).collect(Collectors.toList());
             data.put("roles", roles);
         }
-        return Result.success(data);
+        return data;
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ResponseBody
     public Result logout() {
         return Result.success(null);
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @ResponseBody
-    public Result list(@RequestParam(value = "keyword", required = false) String keyword, @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        Page<SysAccount> adminList = accountService.list(keyword, pageSize, pageNum);
-        return Result.success(CommonPage.restPage(adminList));
+    @GetMapping( "/accounts")
+    public List<SysAccount> findAllAccounts() {
+        return accountService.findAllAccounts();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ResponseBody
     public Result getItem(@PathVariable Long id) {
         SysAccount admin = accountService.getById(id);
         return Result.success(admin);

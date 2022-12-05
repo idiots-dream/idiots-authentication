@@ -25,6 +25,7 @@ import java.util.Optional;
 
 /**
  * JWT登录授权过滤器
+ *
  * @author devil-idiots
  * Date 2022-12-2
  */
@@ -42,11 +43,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (Constant.WHITES
-                .stream()
+        boolean match = Constant.WHITES.stream()
                 .map(p -> new AntPathRequestMatcher(p.getValue(), p.getKey().toString()))
-                .anyMatch(matcher -> matcher.matches(request))
-        ) {
+                .anyMatch(matcher -> matcher.matches(request));
+        if (match) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -69,7 +69,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         log.info("token:{}", token);
         if (StringUtils.equals(token.getKey(), TokenProviderUtil.JWT_AUTH_PREFIX)) {
             TokenProviderUtil.validate(token.getValue());
-                return Optional.of(userDetailsService.loadUserByUsername(TokenProviderUtil.getAccount(token.getValue())));
+            return Optional.of(userDetailsService.loadUserByUsername(TokenProviderUtil.getAccount(token.getValue())));
         }
         if (StringUtils.equals(token.getKey(), TokenProviderUtil.BASIC_AUTH_PREFIX)) {
             Pair<String, String> userAndPassword = TokenProviderUtil.decodeBasicAuthToken(token.getValue());

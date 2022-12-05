@@ -7,13 +7,13 @@ import com.idiots.authentication.dto.UpdateAccountPasswordParam;
 import com.idiots.authentication.entity.SysAccount;
 import com.idiots.authentication.entity.SysResource;
 import com.idiots.authentication.entity.SysRole;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * 后台管理员管理Service
+ *
  * @author devil-idiots
  * Date 2022-12-2
  */
@@ -30,14 +30,16 @@ public interface SysAccountService extends IService<SysAccount> {
 
     /**
      * 登录功能
+     *
      * @param username 用户名
      * @param password 密码
      * @return 生成的JWT的token
      */
-    String login(String username,String password);
+    String login(String username, String password);
 
     /**
      * 刷新token的功能
+     *
      * @param oldToken 旧的token
      */
     String refreshToken(String oldToken);
@@ -79,7 +81,9 @@ public interface SysAccountService extends IService<SysAccount> {
     int updatePassword(UpdateAccountPasswordParam updatePasswordParam);
 
     /**
-     * 获取用户信息
+     * 查询所有账户信息
+     *
+     * @return all account
      */
-    UserDetails loadUserByUsername(String username);
+    List<SysAccount> findAllAccounts();
 }

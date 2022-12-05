@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 全局异常处理
+ *
  * @author devil-idiots
  * Date 2022-12-2
  */
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
         if (bindingResult.hasErrors()) {
             FieldError fieldError = bindingResult.getFieldError();
             if (fieldError != null) {
-                message = fieldError.getField()+fieldError.getDefaultMessage();
+                message = fieldError.getField() + fieldError.getDefaultMessage();
             }
         }
         return Result.failed(message);

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author devil-idiots
@@ -89,7 +89,7 @@ public class SysAccount implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return resources.stream()
+        return resources == null ? null : resources.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getId() + ":" + role.getName()))
                 .collect(Collectors.toList());
     }
@@ -111,6 +111,6 @@ public class SysAccount implements Serializable, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled==1;
+        return enabled == 1;
     }
 }

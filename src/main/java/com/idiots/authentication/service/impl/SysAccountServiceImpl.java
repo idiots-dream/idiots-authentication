@@ -6,15 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.idiots.authentication.domain.AccountUserDetails;
 import com.idiots.authentication.dto.SysAccountParam;
 import com.idiots.authentication.dto.UpdateAccountPasswordParam;
+import com.idiots.authentication.entity.*;
 import com.idiots.authentication.exception.Asserts;
 import com.idiots.authentication.mapper.SysAccountMapper;
 import com.idiots.authentication.mapper.SysLoginLogMapper;
 import com.idiots.authentication.mapper.SysResourceMapper;
 import com.idiots.authentication.mapper.SysRoleMapper;
-import com.idiots.authentication.entity.*;
 import com.idiots.authentication.service.SysAccountRoleService;
 import com.idiots.authentication.service.SysAccountService;
 import com.idiots.authentication.util.TokenProviderUtil;
@@ -23,8 +22,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -89,14 +86,16 @@ public class SysAccountServiceImpl extends ServiceImpl<SysAccountMapper, SysAcco
         String token = null;
         //密码需要客户端加密后传递
         try {
-            UserDetails userDetails = loadUserByUsername(username);
-            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            SysAccount account = getAccountByUsername(username);
+            List<SysResource> resourceList = getResourceList(account.getId());
+            account.setResources(resourceList);
+            if (!passwordEncoder.matches(password, account.getPassword())) {
                 Asserts.fail("密码不正确");
             }
-            if (!userDetails.isEnabled()) {
+            if (!account.isEnabled()) {
                 Asserts.fail("帐号已被禁用");
             }
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = TokenProviderUtil.token(username);
 //            updateLoginTimeByUsername(username);
@@ -234,13 +233,7 @@ public class SysAccountServiceImpl extends ServiceImpl<SysAccountMapper, SysAcco
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        //获取用户信息
-        SysAccount account = getAccountByUsername(username);
-        if (account != null) {
-            List<SysResource> resourceList = getResourceList(account.getId());
-            return new AccountUserDetails(account, resourceList);
-        }
-        throw new UsernameNotFoundException("用户名或密码错误");
+    public List<SysAccount> findAllAccounts() {
+        return this.list(null);
     }
 }
